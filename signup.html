@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #121212; color: white; padding: 20px; text-align: center; }
+        .container { max-width: 400px; margin: 0 auto; }
+        form { display: flex; flex-direction: column; align-items: center; }
+        label { margin: 10px 0 5px; }
+        input { display: block; margin: 0 auto 10px; padding: 8px; width: 100%; max-width: 300px; background: #1e1e1e; color: white; border: 1px solid #333; }
+        button { padding: 8px 16px; background: #007BFF; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        a { color: #00BFFF; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Sign Up</h1>
+        <form id="signupForm">
+            <label for="username">Username:</label>
+            <input type="text" id="username" required>
+            
+            <label for="email">Email:</label>
+            <input type="email" id="email" required>
+            
+            <label for="password">Password:</label>
+            <input type="password" id="password" required>
+            
+            <button type="submit">Sign Up</button>
+        </form>
+        <p><a href="index.html">Back to Home</a></p>
+    </div>
+    
+    <script>
+        document.getElementById("signupForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            
+            const username = document.getElementById("username").value.trim();
+            const email = document.getElementById("email").value.trim();
+            const password = document.getElementById("password").value.trim();
+            
+            const user = { username, email, password };
+            localStorage.setItem("user", JSON.stringify(user));
+            alert("Sign-up successful! You can now log in.");
+            window.location.href = "login.html";
+        });
+    </script>
+</body>
+</html>

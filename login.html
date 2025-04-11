@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - presmae</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: white;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://www.transparenttextures.com/patterns/film.png');
+            background-size: cover;
+        }
+        .container {
+            text-align: center;
+            background: #1e1e1e;
+            padding: 40px;
+            border-radius: 8px;
+        }
+        h1 { font-family: 'Impact', sans-serif; font-size: 48px; margin-bottom: 20px; }
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        label { margin: 10px 0 5px; }
+        input {
+            margin: 0 auto 10px;
+            padding: 8px;
+            width: 100%;
+            max-width: 300px;
+            background: #333;
+            color: white;
+            border: 1px solid #555;
+            border-radius: 4px;
+        }
+        button {
+            padding: 8px 16px;
+            background: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+        button:hover { background: #0056b3; }
+        .signup-btn {
+            background: #00BFFF;
+        }
+        .signup-btn:hover { background: #009ACD; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>presmae</h1>
+        <form id="loginForm">
+            <label for="loginEmail">Email:</label>
+            <input type="email" id="loginEmail" required>
+            <label for="loginPassword">Password:</label>
+            <input type="password" id="loginPassword" required>
+            <button type="submit">Login</button>
+        </form>
+        <button class="signup-btn" onclick="window.location.href='signup.html'">Sign Up</button>
+    </div>
+
+    <script>
+        document.getElementById("loginForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            const email = document.getElementById("loginEmail").value.trim();
+            const password = document.getElementById("loginPassword").value.trim();
+            const storedUser = JSON.parse(localStorage.getItem("user"));
+
+            if (storedUser && storedUser.email === email && storedUser.password === password) {
+                alert("Login successful!");
+                localStorage.setItem("loggedIn", "true");
+                window.location.href = "index.html";
+            } else {
+                alert("Invalid email or password.");
+            }
+        });
+    </script>
+</body>
+</html>

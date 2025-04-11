@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Summary</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #121212; color: white; padding: 20px; text-align: center; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .movie { margin: 20px 0; padding: 15px; background: #1e1e1e; border-radius: 4px; }
+        .thumbnail { max-width: 200px; border-radius: 4px; }
+        iframe { width: 100%; max-width: 640px; height: 360px; border: none; }
+        .streaming-links a { color: #00BFFF; margin: 0 10px; text-decoration: none; }
+        .streaming-links a:hover { text-decoration: underline; }
+        a { color: #00BFFF; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Movie Night Picks</h1>
+        <div id="movies"></div>
+        <div id="error"></div>
+        <p><a href="index.html">Back to Home</a></p>
+    </div>
+
+    <script>
+        const YOUTUBE_API_KEY = 'AIzaSyAcLUEZvESstj_6CU-oW2CtYgHrKzw27zg';
+        const urlParams = new URLSearchParams(window.location.search);
+        const pollId = urlParams.get('poll');
+
+        if (!pollId) {
+            document.getElementById('error').innerHTML = 'No poll ID provided in URL.';
+        } else {
+            fetchPollData();
+        }
+
+        async function fetchPollData() {
+            try {
+                const response = await fetch(`http://localhost:3000/api/poll/${pollId}`);
+                if (!response.ok) throw new Error('Poll fetch failed');
+                const data = await response.json();
+                displayMovies(data.movies);
+            } catch (error) {
+                document.getElementById('error').innerHTML = `Error: ${error.message}`;
+            }
+        }
+
+        async function displayMovies(movies) {
+            const moviesDiv = document.getElementById('movies');
+            moviesDiv.innerHTML = '';
+
+            for (const movie of movies) {
+                const movieDiv = document.createElement('div');
+                movieDiv.className = 'movie';
+
+                // Fetch YouTube trailer
+                let thumbnail = 'https://via.placeholder.com/200x112?text=No+Trailer';
+                let trailerHtml = '<p>No trailer available.</p>';
+                try {
+                    const ytResponse = await fetch(
+                        `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&q=${encodeURIComponent(movie.name + ' trailer')}&maxResults=1&key=${YOUTUBE_API_KEY}`
+                    );
+                    const ytData = await ytResponse.json();
+                    if (ytData.items && ytData.items.length > 0) {
+                        const videoId = ytData.items[0].id.videoId;
+                        thumbnail = ytData.items[0].snippet.thumbnails.medium.url;
+                        trailerHtml = `<iframe src="https://www.youtube.com/embed/${videoId}" allowfullscreen></iframe>`;
+                    }
+                } catch (error) {
+                    console.log(`No trailer for ${movie.name}: ${error}`);
+                }
+
+                // Streaming links (static mapping for simplicity)
+                const streamingLinks = getStreamingLinks(movie.name);
+
+                movieDiv.innerHTML = `
+                    <h2>${movie.name}</h2>
+                    <img src="${thumbnail}" alt="${movie.name} thumbnail" class="thumbnail">
+                    ${trailerHtml}
+                    <div class="streaming-links">${streamingLinks}</div>
+                `;
+                moviesDiv.appendChild(movieDiv);
+            }
+        }
+
+        function getStreamingLinks(movieName) {
+            // Static mapping (expand as needed)
+            const platforms = {
+                'The Matrix': '<a href="https://www.netflix.com/title/20557937" target="_blank">Netflix</a>',
+                'Inception': '<a href="https://www.amazon.com/Inception-Leonardo-DiCaprio/dp/B0047QX26Q" target="_blank">Prime Video</a>',
+                // Add more movies or use an API later
+            };
+            return platforms[movieName] || 'Not found on major platforms.';
+        }
+    </script>
+</body>
+</html>
